@@ -18,7 +18,7 @@ class Tweet(CommonModel):
 class Like(CommonModel):
     """ Like Model Definition """
 
-    user = models.ForeignKey('users.User', related_name='likes', ordn_delete=models.CASCADE)
+    user = models.ForeignKey('users.User', related_name='likes', on_delete=models.CASCADE)
     tweet = models.ForeignKey('tweets.Tweet', related_name='likes', on_delete=models.CASCADE)
 
     def __str__(self):
