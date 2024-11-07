@@ -16,10 +16,9 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
-from tweets.views import tweet_list
+from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", tweet_list, name="home"),
+    path("", include("tweets.urls")),
 ]
