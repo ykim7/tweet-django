@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Tweet, Like
 
+
 class ElonFilter(admin.SimpleListFilter):
 
     title = "Filter by like count"
@@ -16,20 +17,22 @@ class ElonFilter(admin.SimpleListFilter):
     def queryset(self, request, tweets):
         likes = self.value()
         if likes == "elon":
-            return tweets.filter(payload__contains='Elon Musk')
+            return tweets.filter(payload__contains="Elon Musk")
         elif likes == "no_elon":
-            return tweets.exclude(payload__contains='Elon Musk')
+            return tweets.exclude(payload__contains="Elon Musk")
 
 
 @admin.register(Tweet)
 class TweetAdmin(admin.ModelAdmin):
-    list_display = ['payload', 'user', 'like_count']
+    list_display = ["payload", "user", "like_count"]
+
     def like_count(self, obj):
         return obj.likes.count()
-    like_count.short_description = 'Likes Count'
+
+    like_count.short_description = "Likes Count"
 
 
 @admin.register(Like)
 class LikeAdmin(admin.ModelAdmin):
-    search_fields = ("user__username", )
-    list_filter = ("created_at", )
+    search_fields = ("user__username",)
+    list_filter = ("created_at",)
