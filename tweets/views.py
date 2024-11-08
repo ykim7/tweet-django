@@ -1,30 +1,28 @@
 from django.shortcuts import render
 from .models import Tweet
 from users.models import User
+from .serializers import TweetSerializer
 from rest_framework.exceptions import NotFound
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 
-def tweet_list(request):
-    tweets = Tweet.objects.all()
-    return render(
-        request,
-        "tweet_list.html",
-        {"tweets": tweets},
-    )
+class TweetList(APIView):
+    def get(self, request):
+        tweets = Tweet.objects.all()
+        serializer = TweetSerializer(tweets, many=True)
+        return Response(serializer.data)
 
 
-def user_tweet_list(request, user_id):
-    try:
-        user = User.objects.get(id=user_id)
-        tweets = Tweet.objects.filter(user=user)
-        data = []
-        for tweet in tweets:
-            each_tweet = {
-                "id": tweet.id,
-                "payload": tweet.payload,
-                "user_id": tweet.user.id,
-            }
-            data.append(each_tweet)
-        return render(request, "user_tweet_list.html", {"tweets": tweets, "user": user})
-    except User.DoesNotExist:
-        return NotFound
+class UserTweetList(APIView):
+    def get(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+            tweets = Tweet.objects.filter(user=user)
+            serializer = TweetSerializer(tweets, many=True)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+            )
