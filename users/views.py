@@ -38,6 +38,7 @@ class Users(APIView):
         users = User.objects.all()
         serializer = serializers.UserSerializer(users, many=True)
         return Response(serializer.data)
+    
     def post(self, request):
         password = request.data.get("password")
         if not password:
