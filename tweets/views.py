@@ -2,11 +2,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated
 from .serializers import TweetSerializer
 from .models import Tweet
 
 
 class Tweets(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         tweets = Tweet.objects.all()
         serializer = TweetSerializer(tweets, many=True)
@@ -17,7 +20,7 @@ class Tweets(APIView):
         if serializer.is_valid():
             tweet = serializer.save()
             return Response(TweetSerializer(tweet).data,)
-        return Response(serializer.errors,)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TweetDetail(APIView):
     def get_object(self, pk):
